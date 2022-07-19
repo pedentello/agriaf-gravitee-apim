@@ -2,7 +2,7 @@
 
 jwtSecret: secret
 
-adminPasswordBcrypt: $xxxxxx
+adminPasswordBcrypt: password
 adminEmail: user@agriaf.com.br
 adminFirstName: Admin
 adminLastName: Agriaf
