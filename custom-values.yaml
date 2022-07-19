@@ -1,0 +1,106 @@
+# custom-values.yml
+
+jwtSecret: secret
+
+adminPasswordBcrypt: $xxxxxx
+adminEmail: user@agriaf.com.br
+adminFirstName: Admin
+adminLastName: Agriaf
+
+es:
+  endpoints:
+  - http://elasticsearch-gravitee-coordinating-only.default.svc.cluster.local:9200
+
+mongo:
+  uri: mongodb://user:passwd@gravitee-mongodb-0.gravitee-mongodb-svc.default.svc.cluster.local:27017,gravitee-mongodb-1.gravitee-mongodb-svc.default.svc.cluster.local:27017/gravitee-apim?ssl=false
+
+portal:
+  ingress:
+    enabled: true
+    path: /
+    hosts:
+      - devp.agriaf.com.br
+    tls:
+      - hosts:
+          - devp.agriaf.com.br
+        secretName: portal-tls-certs
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt-prod
+  image:
+    repository: graviteeio/apim-portal-ui
+    tag: 3.17.0
+ui:
+  ingress:
+    path: /
+    hosts:
+      - apim.agriaf.com.br
+    tls:
+    - hosts:
+       - apim.agriaf.com.br
+      secretName: ui-tls-certs
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt-prod
+      nginx.ingress.kubernetes.io/rewrite-target: /
+  image:
+    repository: graviteeio/apim-management-ui
+    tag: 3.17.0
+api:
+  ingress:
+    management:
+      path: /management
+      hosts:
+        - apim.agriaf.com.br
+      tls:
+        - hosts:
+            - apim.agriaf.com.br
+          secretName: apim-tls-certs
+      annotations:
+        cert-manager.io/cluster-issuer: letsencrypt-prod
+    portal:
+      path: /portal
+      hosts:
+        - apim.agriaf.com.br
+      tls:
+        - hosts:
+            - apim.agriaf.com.br
+          secretName: apim-tls-certs
+      annotations:
+        cert-manager.io/cluster-issuer: letsencrypt-prod
+  image:
+    repository: graviteeio/apim-management-api
+    tag: 3.17.0
+
+gateway:
+  ingress:
+    path: /
+    hosts:
+      - api.agriaf.com.br
+    tls:
+    - hosts:
+        - api.agriaf.com.br
+      secretName: gateway-tls-certs
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt-prod
+  reporters:
+    file:
+      enabled: true
+      output: JSON
+    elasticsearch:
+      enabled: true
+      endpoints:
+        - http://elasticsearch-gravitee-coordinating-only.default.svc.cluster.local:9200
+  image:
+    repository: graviteeio/apim-gateway
+    tag: 3.17.0
+
+smtp:
+  enabled: true
+  host: smtp.gmail.com                           # hostname of the SMTP service
+  port: 587                                      # depends on service. Azure AKS blocks port 25
+  from: user@agriaf.com.br                       # choose any email address from your doman
+  username: user@agriaf.com.br                   # get this from SMTP service
+  password: XXXXXXXXX                            # get this from SMTP service
+  subject: "[Agriaf APIM] %s"                    # this can be customised but leave %s in place
+  properties:
+    auth: true
+    starttlsEnable: true
